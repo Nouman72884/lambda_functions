@@ -1,0 +1,16 @@
+import boto3
+from boto3.dynamodb.conditions import Key,Attr
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dbtable = dynamodb.Table("data")
+def lambda_handler(event, context):
+    tableitems = dbtable.scan(FilterExpression=Attr('Name').eq(event['Name']))['Items']
+    response =  tableitems
+    length = len(response)
+    if(length<1):
+        dbtable.put_item(
+            Item = event
+            )
+        return {"message": "user added successfully"}
+    else:
+        return {"message": "user already exist"}
+    

@@ -1,0 +1,19 @@
+import boto3
+from boto3.dynamodb.conditions import Key,Attr
+db = boto3.resource("dynamodb")
+table = db.Table("data")
+def lambda_handler(event, context):
+    name=event["Name"]
+    tableitems = table.scan(FilterExpression=Attr('Name').eq(event['Name']))['Items']
+    response =  tableitems
+    length = len(response)
+    if(length<1):
+        return {"message": "user does not exist"}
+    else:
+        response = table.get_item(
+            Key={
+                'Name': name
+                }
+    
+        )
+        return response['Item']

@@ -1,0 +1,18 @@
+import boto3
+from boto3.dynamodb.conditions import Key,Attr
+def lambda_handler(event, context):
+    var = event['age']
+    var1 = event['id']
+    db = boto3.resource("dynamodb")
+    table = db.Table("data")
+    table.update_item(
+        Key={
+            'Name': event['Name']
+            },
+        UpdateExpression='SET age = :val1, id = :val2',
+        ExpressionAttributeValues={ 
+            ':val1': var,
+            ':val2': var1
+                    }
+                )
+    return {"message": "user updated"}
